@@ -17,11 +17,23 @@ function help() {
     exit
 }
 
+function timeprint() {
+    timediff=$1
+    hours=$((timediff / 60 / 60))
+    [[ $hours -lt 10 ]] && hours="0$hours"
+    timediff=$((timediff - (hours * 60 * 60)))
+    minutes=$((timediff / 60))
+    [[ $minutes -lt 10 ]] && minutes="0$minutes"
+    seconds=$((timediff - (minutes * 60)))
+    [[ $seconds -lt 10 ]] && seconds="0$seconds"
+    echo "$hours:$minutes:$seconds"
+}
+
 if [[ $1 = "-h" ]] || [[ $1 = "--help" ]]; then
     help
 fi
 
-file=${DOING_FILE:=$HOME/.doing.txt}
+file=${DOING_FILE:=$HOME/doing.txt}
 
 [[ ! -e $file ]] && touch $file
 
@@ -35,28 +47,29 @@ else
     starttime=$(echo $lastline | cut -d : -f 2 -)
     endtime=$(echo $lastline   | cut -d : -f 3 -)
 fi
+now=$(date +'%s')
 if [[ -z $1 ]]; then
     if [[ -z $lastline ]]; then
         echo "((no tasks recorded))"
     else
         echo -n "$taskname"
-        [[ -n $endtime ]] && echo -n "  ((done))"
+        if [[ -n $endtime ]]; then
+            echo
+            echo -n "((completed after "
+            echo -n "$(timeprint $((endtime - starttime))) "
+            fancytime=$(date -d "@$starttime")
+            echo -n "at $fancytime))"
+        else
+            echo -n " (($(timeprint $((now - starttime)))))"
+        fi
         echo
     fi
 elif [[ $1 = "-f" ]]; then
     if [[ -n $taskname ]] && [[ -z $endtime ]]; then
         echo "$(head -n -1 $file)">$file
-        endtime=$(date +'%s')
+        endtime=$now
         echo "$lastline:$endtime">>$file
-        timediff=$((endtime - starttime))
-        hours=$((timediff / 60 / 60))
-        [[ $hours < 10 ]] && hours="0$hours"
-        timediff=$((timediff - (hours * 60 * 60)))
-        minutes=$((timediff / 60))
-        [[ $minutes < 10 ]] && minutes="0$minutes"
-        seconds=$((timediff - (minutes * 60)))
-        [[ $seconds < 10 ]] && seconds="0$seconds"
-        echo "$hours:$minutes:$seconds spent on '$taskname'"
+        echo "$(timeprint $((endtime - starttime))) spent on '$taskname'"
     else
         echo "No task to finish"
     fi
