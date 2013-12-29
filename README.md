@@ -9,7 +9,7 @@ How to do
 
 doing records your actions, as well as their start and end times (in
 UNIX epoch format) in $DOING_FILE if you've set it, or ~/doing.txt if
-you have not. Recording tasks is simple; simply start a task:
+you have not. Recording tasks is simple; just start a task:
 
     $ doing Something Productive
 
@@ -23,7 +23,7 @@ and end a session:
     $ doing -f
     01:01:08 spent on 'Something Productive'
 
-That's it! Your doing.txt file will look like this:
+That's it! Your doing.txt file will look somethign like this:
 
     Something Productive:1388345856:1388349524
 
