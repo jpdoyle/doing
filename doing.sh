@@ -73,6 +73,47 @@ elif [[ $1 = "-f" ]]; then
     else
         echo "No task to finish"
     fi
+elif [[ $1 = "-l" ]]; then
+    shift
+    taskname="$*"
+    if [[ -n $taskname ]]; then
+        escaped=$(printf %s "$taskname" | sed 's/[][()\.^$?*+]/\\&/g')
+        lines=$(grep "^$escaped" "$DOING_FILE")
+        total=0
+        while read -r line; do
+            starttime=$(echo $line | cut -d : -f 2 -)
+            endtime=$(echo $line   | cut -d : -f 3 -)
+            total=$((total + endtime - starttime))
+        done <<< "$lines"
+        echo "$(timeprint $total) spent on '$taskname'"
+    else
+        declare -A totals
+        current=""
+        currenttotal=0
+        while read -r line; do
+            taskname=$(echo $line  | cut -d : -f 1 -)
+            starttime=$(echo $line | cut -d : -f 2 -)
+            endtime=$(echo $line   | cut -d : -f 3 -)
+            if [[ -n $endtime ]]; then
+                [[ -z ${totals["$taskname"]} ]] && totals["$taskname"]=0
+                totals["$taskname"]=$((totals["$taskname"] + endtime - starttime))
+            else
+                current="$taskname"
+                currenttotal=$((now - starttime))
+            fi
+        done <$file
+        for task in "${!totals[@]}"; do
+            echo "$task: $(timeprint ${totals["$task"]})"
+        done
+        if [[ -n current ]]; then
+            echo "$current: $(timeprint $currenttotal)  ((current))"
+        fi
+    fi
 else
-    echo "$*:$(date +'%s')">>$file
+    line="$*:$(date +'%s')"
+    if [[ -n $lastline ]]; then
+        echo $line>>$file
+    else
+        echo $line>$file
+    fi
 fi
