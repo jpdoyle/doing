@@ -20,11 +20,11 @@ function help() {
 function timeprint() {
     timediff=$1
     hours=$((timediff / 60 / 60))
-    [[ $hours -lt 10 ]] && hours="0$hours"
     timediff=$((timediff - (hours * 60 * 60)))
+    [[ $hours -lt 10 ]] && hours="0$hours"
     minutes=$((timediff / 60))
-    [[ $minutes -lt 10 ]] && minutes="0$minutes"
     seconds=$((timediff - (minutes * 60)))
+    [[ $minutes -lt 10 ]] && minutes="0$minutes"
     [[ $seconds -lt 10 ]] && seconds="0$seconds"
     echo "$hours:$minutes:$seconds"
 }
@@ -105,7 +105,7 @@ elif [[ $1 = "-l" ]]; then
         for task in "${!totals[@]}"; do
             echo "$task: $(timeprint ${totals["$task"]})"
         done
-        if [[ -n current ]]; then
+        if [[ -n $current ]]; then
             echo "$current: $(timeprint $currenttotal)  ((current))"
         fi
     fi
