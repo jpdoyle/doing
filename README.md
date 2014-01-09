@@ -39,7 +39,7 @@ spent on a specific task:
 Or on all tasks:
 
     $ doing -l
-    reading: 02:14:46
+    reading: 04:48:12
     youtube: 05:55:47
     reddit: 04:48:12
     coding: 03:00:05
