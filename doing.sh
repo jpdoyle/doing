@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function help() {
-    echo "Usage: doing [TASKNAME]"
+    echo "Usage: doing [-l] [TASKNAME]"
     echo "  or:  doing [-f | -h | --help]"
     echo "A simple utility to time what tasks you're working on."
     echo
@@ -9,8 +9,11 @@ function help() {
     echo "  <none>      If TASKNAME is empty, print current task name."
     echo "              Otherwise, finish the current task and start"
     echo "              a new one named TASKNAME."
-    echo "  -f          Finish current task"
+    echo "  -f          Finish current task."
     echo "  -h, --help  Print this help message."
+    echo "  -l          If TASKNAME is not empty, print total time"
+    echo "              spent on TASKNAME. Otherwise, list total"
+    echo "              for all tasks."
     echo "Variables:"
     echo "  DOING_FILE  Full path to task file, defaults to"
     echo "              \$HOME/.doing.txt"
@@ -83,7 +86,11 @@ elif [[ $1 = "-l" ]]; then
         while read -r line; do
             starttime=$(echo $line | cut -d : -f 2 -)
             endtime=$(echo $line   | cut -d : -f 3 -)
-            total=$((total + endtime - starttime))
+            if [[ -n $endtime ]]; then
+                total=$((total + endtime - starttime))
+            else
+                total=$((toal + now - starttime))
+            fi
         done <<< "$lines"
         echo "$(timeprint $total) spent on '$taskname'"
     else
