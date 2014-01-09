@@ -25,9 +25,24 @@ and end a session:
 
 That's it! Your doing.txt file will look somethign like this:
 
+    $ cat $DOING_FILE
     Something Productive:1388345856:1388349524
 
-New sessions get added onto the end of this file. Soon, you will be
-able to do cool things to display information from this file like
-totalling time spent on different tasks, but right now this is it.
+New sessions get added onto the end of this file.
+
+After you have done some things, you can look at how much time you've
+spent on a specific task:
+
+    $ doing -l reddit
+    04:48:12 spent on 'reddit'
+
+Or on all tasks:
+
+    $ doing -l
+    reading: 02:14:46
+    youtube: 05:55:47
+    reddit: 04:48:12
+    coding: 03:00:05
+
+Now stop focusing so much on *how* you're doing, and just do!
 
